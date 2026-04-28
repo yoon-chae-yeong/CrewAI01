@@ -46,36 +46,6 @@ growth_agent = Agent(
     allow_delegation=False,
 )
 
-risk_agent = Agent(
-    role="리스크 에이전트 (Risk)",
-    goal="시장·운영·재무·규제 관점의 주요 리스크를 식별하고 우선순위화",
-    backstory=(
-        "불확실성과 다운사이드를 체계적으로 목록화하는 리스크 분석 전문가입니다."
-    ),
-    verbose=True,
-    allow_delegation=False,
-)
-
-failure_analysis_agent = Agent(
-    role="실패 분석 에이전트 (Failure Analysis)",
-    goal="유사 시장·유사 제품의 실패 사례와 원인을 분석해 교훈 도출",
-    backstory=(
-        "포스트모템과 산업 사례를 통해 '왜 실패했는지'를 명료하게 정리합니다."
-    ),
-    verbose=True,
-    allow_delegation=False,
-)
-
-devils_advocate_agent = Agent(
-    role="악마의 변호인 에이전트 (Devil's Advocate)",
-    goal="합의된 가정을 의도적으로 비판해 논리 구멍과 과대평가 지점 노출",
-    backstory=(
-        "낙관적 결론에 균형을 주기 위해 반론과 대안 시나리오를 날카롭게 제시합니다."
-    ),
-    verbose=True,
-    allow_delegation=False,
-)
-
 business_case_agent = Agent(
     role="비즈니스 케이스 에이전트 (Business Case)",
     goal="앞선 분석을 통합해 투자·실행 여부를 판단할 수 있는 비즈니스 케이스 초안 작성",
@@ -122,35 +92,12 @@ growth_task = Task(
     context=[opportunity_task],
 )
 
-risk_task = Task(
-    description="""'{topic}' 진입·성장 시 예상되는 리스크를 분류하고(시장·운영·규제·재무 등)
-    영향도와 발생 가능성 관점에서 정리하세요.""",
-    agent=risk_agent,
-    expected_output="""리스크 매트릭스 또는 목록, 완화 방향 초안.""",
-    context=[growth_task],
-)
-
-failure_analysis_task = Task(
-    description="""유사 산업·유사 모델의 실패 사례를 참고해 '{topic}' 관련 함정과 반복되는 실패 원인을 분석하세요.""",
-    agent=failure_analysis_agent,
-    expected_output="""실패 패턴, 교훈, 회피·완화 아이디어.""",
-    context=[risk_task],
-)
-
-devils_advocate_task = Task(
-    description="""지금까지의 낙관적 전제와 결론을 비판적으로 검토하세요.
-    '{topic}' 사업/전략이 실패할 수 있는 논리적 경로를 반드시 포함하세요.""",
-    agent=devils_advocate_agent,
-    expected_output="""반론 요지, 재검토해야 할 가정, 대안 시나리오.""",
-    context=[failure_analysis_task],
-)
-
 business_case_task = Task(
     description="""전 단계까지의 내용을 통합해 의사결정용 비즈니스 케이스 초안을 작성하세요.
     '{topic}'에 대한 권고 요지, 핵심 근거, 다음 액션을 명확히 하세요.""",
     agent=business_case_agent,
     expected_output="""비즈니스 케이스 초안(요약·근거·권고·리스크 요약).""",
-    context=[devils_advocate_task],
+    context=[growth_task],
 )
 
 validation_task = Task(
@@ -167,9 +114,6 @@ market_research_crew = Crew(
         research_agent,
         opportunity_agent,
         growth_agent,
-        risk_agent,
-        failure_analysis_agent,
-        devils_advocate_agent,
         business_case_agent,
         validation_agent,
     ],
@@ -177,9 +121,6 @@ market_research_crew = Crew(
         research_task,
         opportunity_task,
         growth_task,
-        risk_task,
-        failure_analysis_task,
-        devils_advocate_task,
         business_case_task,
         validation_task,
     ],
